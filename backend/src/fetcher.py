@@ -13,7 +13,7 @@ HEADERS = {
 
 ALLOWED_EXTENSIONS = {
     ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".cpp",
-    ".c", ".go", ".rs", ".md", ".txt", ".json", ".yaml", ".yml"
+    ".c", ".go", ".rs", ".md", ".txt", ".json", ".yaml", ".yml", ".html", ".css"
 }
 
 def parse_github_url(url: str):
@@ -26,11 +26,31 @@ def fetch_repo_files(owner: str, repo: str, path: str = "") -> list[dict]:
     response.raise_for_status()
     
     items = response.json()
+    
+    files = []
+    for item in items:
+        if item["type"] == "file":
+            ext = os.path.splitext(item["name"])[1].lower()
+            if ext in ALLOWED_EXTENSIONS:
+                file_response = requests.get(item["download_url"])
+                files.append({
+                    "path": item["path"],
+                    "content": file_response.text
+                })
 
-
+        elif item["type"] == "dir":
+            files.extend(fetch_repo_files(owner, repo, item["path"]))
+    return files
+            
 def fetch_from_url(github_url: str) -> list[dict]:
     owner, repo = parse_github_url(github_url)
     print(f"Fetching {owner}/{repo}...")
     files = fetch_repo_files(owner, repo)
     print(f"Fetched {len(files)} files")
     return files
+
+if __name__ == "__main__":
+    files = fetch_from_url("https://github.com/Abhigyan2005/twogoodcomFrontend")
+    print(f"Total files: {len(files)}")
+    print(f"First file path: {files[0]['path']}")
+    print(f"First file content preview: {files[0]['content']}")
