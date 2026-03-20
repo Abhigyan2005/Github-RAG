@@ -16,6 +16,8 @@ ALLOWED_EXTENSIONS = {
     ".c", ".go", ".rs", ".md", ".txt", ".json", ".yaml", ".yml", ".html", ".css"
 }
 
+SKIP_FILES = {"package-lock.json", "yarn.lock", "package.json", ".gitignore", ".eslintrc"}
+
 def parse_github_url(url: str):
     parts = url.rstrip("/").split("/")
     return parts[-2], parts[-1]
@@ -29,6 +31,8 @@ def fetch_repo_files(owner: str, repo: str, path: str = "") -> list[dict]:
     
     files = []
     for item in items:
+        if item["name"] in SKIP_FILES:
+            continue
         if item["type"] == "file":
             ext = os.path.splitext(item["name"])[1].lower()
             if ext in ALLOWED_EXTENSIONS:
@@ -48,9 +52,3 @@ def fetch_from_url(github_url: str) -> list[dict]:
     files = fetch_repo_files(owner, repo)
     print(f"Fetched {len(files)} files")
     return files
-
-if __name__ == "__main__":
-    files = fetch_from_url("https://github.com/Abhigyan2005/twogoodcomFrontend")
-    print(f"Total files: {len(files)}")
-    print(f"First file path: {files[0]['path']}")
-    print(f"First file content preview: {files[0]['content']}")
