@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
-
 function Landing() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <>
       <nav className="flex p-8 justify-between items-center">
@@ -15,7 +14,9 @@ function Landing() {
             Sign In
           </button>
           <button
-            onClick={()=>{navigate("/login")}}
+            onClick={() => {
+              navigate("/login");
+            }}
             className="p-2 text-[#0F172A] bg-[#c0c1ff] rounded-2xl cursor-pointer hover:scale-110 transition-all"
           >
             Sign Up
@@ -36,7 +37,12 @@ function Landing() {
               onboarding, refactoring, and complex architectural questions.
             </p>
 
-            <button className="px-7 py-3 text-black mt-4 bg-linear-to-br from-white to-[#6366F1] cursor-pointer hover:scale-110 transition-all">
+            <button
+              onClick={() => {
+                navigate("/dashboard");
+              }}
+              className="px-7 py-3 text-black mt-4 bg-linear-to-br from-white to-[#6366F1] cursor-pointer hover:scale-110 transition-all"
+            >
               Get Started
             </button>
           </div>
